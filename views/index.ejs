@@ -1,20 +1,33 @@
-<!-- index.ejs -->
-
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%= title %></title>
-</head>
-<body>
-    <h1>Welcome to <%= title %></h1>
 
-    <nav>
-        <ul>
-            <li><a href="/signup">Signup</a></li>
-            <li><a href="/login">Login</a></li>
-        </ul>
-    </nav>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>To-do App</title>
+  <link rel="stylesheet" href="/css/styles.css" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <title>To-Do Application</title>
+</head>
+
+<body>
+  <div class="grid grid-cols-6">
+    <div class="col-start-3 col-span-2">
+      <%- include("header.ejs") %>
+      <p class="py-2">LMS APP</p>
+      <p class="py-2">Want to Explore ? <a href="/signup" class="colorred" >Sign-up now</a></p>
+      <p class="py-2">Already have an account ? <a href="/login" class="colorred">Sign-in</a></p>
+    </div>
+ 
+
+  </div>
+  <div class="grid grid-cols-6 gap-2 py-4">
+    <div class="col-start-3 col-span-2">
+      <%- include('footer.ejs') %>
+  </div> 
+  </div>
 </body>
+
+
 </html>

@@ -10,6 +10,7 @@ const sequelize = new Sequelize(database, username, password, {
   dialect: "postgres",
 });
 
+const Users = require('./models/user')(sequelize, Sequelize);
 // Define a connect function to authenticate the connection
 const connect = async () => {
   try {
@@ -24,4 +25,5 @@ const connect = async () => {
 module.exports = {
   connect,
   sequelize,
+  Users,
 };
