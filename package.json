@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepare": "cd ..&& husky install LMS_APP/.husky"
   },
   "author": "chandramouli <chandramoulisangabathula01>",
   "license": "ISC",
@@ -17,7 +18,14 @@
     "sequelize": "^6.35.2"
   },
   "devDependencies": {
+    "husky": "^9.0.7",
     "nodemon": "^3.0.3",
     "sequelize-cli": "^6.6.2"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm test"
+    }
   }
+  
 }
