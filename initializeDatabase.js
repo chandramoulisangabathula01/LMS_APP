@@ -1,6 +1,7 @@
 const Sequelize = require("sequelize");
 
-const database = "LMS_APP_DB";
+// const database = "LMS_APP_DB";
+const database = "lms-app-dev"
 const username = "postgres";
 const password = "123456";
 
@@ -8,7 +9,12 @@ const password = "123456";
 const sequelize = new Sequelize(database, username, password, {
   host: "localhost",
   dialect: "postgres",
+  llogging: (sql) => {
+    console.log(sql);
+  },
 });
+
+
 
 const Users = require('./models/user')(sequelize, Sequelize);
 // Define a connect function to authenticate the connection
@@ -20,6 +26,7 @@ const connect = async () => {
     console.error("Unable to connect to the database:", error);
   }
 };
+
 
 // Export the connect function and the Sequelize instance
 module.exports = {

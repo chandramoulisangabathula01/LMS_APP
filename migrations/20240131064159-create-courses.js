@@ -2,7 +2,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('Courses', {
+    await queryInterface.createTable('courses', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -17,6 +17,7 @@ module.exports = {
       },
       created_at: {
         allowNull: false,
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
         type: Sequelize.DATE
       },
       updated_at: {
@@ -25,8 +26,7 @@ module.exports = {
       }
     });
   },
-  // eslint-disable-next-line no-unused-vars
-  async down(queryInterface, _Sequelize) {
-    await queryInterface.dropTable('Courses');
+  async down(queryInterface,) {
+    await queryInterface.dropTable('courses');
   }
 };

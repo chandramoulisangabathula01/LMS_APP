@@ -1,4 +1,4 @@
-'use strict';
+// models/index.js
 
 const fs = require('fs');
 const path = require('path');
@@ -8,6 +8,12 @@ const basename = path.basename(__filename);
 const env = process.env.NODE_ENV || 'development';
 const config = require(__dirname + '/../config/config.json')[env];
 const db = {};
+
+const models = {
+  Users: require('./users'),
+  Courses: require('./courses'),
+  // ... (other models)
+};
 
 let sequelize;
 if (config.use_env_variable) {
@@ -31,9 +37,11 @@ fs
     db[model.name] = model;
   });
 
-Object.keys(db).forEach(modelName => {
-  if (db[modelName].associate) {
-    db[modelName].associate(db);
+// Update association definitions
+// Update association definitions
+Object.keys(models).forEach(modelName => {
+  if (models[modelName].associate) {
+    models[modelName].associate(models);
   }
 });
 

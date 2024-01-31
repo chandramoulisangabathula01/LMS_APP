@@ -1,1 +1,49 @@
-<h1>educator dashboard/console</h1>
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="./css/styles.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title><%= title %></title>
+    
+</head>
+<body>
+    <div class="grid grid-cols-6">
+        <div class="col-start-3 col-span-2">
+            <%- include('header.ejs') %>
+            
+            <div class="flex flex-row">
+                <div class="m-3">
+                    <a href="/createcourse" class=" text-white text-center block bg-gray-600 rounded font-medium  px-4 py-4 hover:bg-gray-800  ">
+                        Create Course
+                    </a>
+                </div>
+                <div class="m-3">
+                    <a href="/my-courses" class=" text-white text-center block bg-gray-600 rounded font-medium  px-4 py-4 hover:bg-gray-800"  >
+                        My Courses
+                    </a>
+                </div>
+                
+            </div>
+            
+        </div>
+    </div>
+    <div class="grid grid-cols-6 gap-2 py-4">
+      <div class="col-start-3 col-span-2">
+        <%- include('footer.ejs') %>
+        <a href="/signout" class="bg-red-600 hover:bg-red-800 text-white px-5 py-1.5 rounded font-medium mr-2 mb-2" >Signout</a>
+    </div> 
+    
+    <% if(messages && messages.error && messages.error.length > 0)  { %>
+        <% for(var i=0; i<messages.error.length; i++) { %>
+            <p class="bg-red-300 my-4 list-none rounded border-gray-50 px-4 py-2"><%= messages.error[i] %></p>
+        <% } %>
+    <% } %>
+
+    </div>
+</body>
+</html>
