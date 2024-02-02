@@ -2,19 +2,17 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('Chapters', {
+    await queryInterface.createTable('Pages', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      chapterName: {
-        type: Sequelize.STRING,
-        allowNull: false,
-        unique: true,
+      title: {
+        type: Sequelize.STRING
       },
-      chapterContent: {
+      content: {
         type: Sequelize.TEXT
       },
       createdAt: {
@@ -28,6 +26,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('Chapters');
+    await queryInterface.dropTable('Pages');
   }
 };

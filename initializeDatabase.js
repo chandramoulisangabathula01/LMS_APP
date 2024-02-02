@@ -1,3 +1,5 @@
+// initializeDatabase.js
+
 const Sequelize = require("sequelize");
 
 // const database = "LMS_APP_DB";
@@ -16,8 +18,7 @@ const sequelize = new Sequelize(database, username, password, {
 
 
 
-const Users = require('./models/user')(sequelize, Sequelize);
-// Define a connect function to authenticate the connection
+
 const connect = async () => {
   try {
     await sequelize.authenticate();
@@ -27,10 +28,9 @@ const connect = async () => {
   }
 };
 
-
 // Export the connect function and the Sequelize instance
 module.exports = {
   connect,
   sequelize,
-  Users,
+  
 };

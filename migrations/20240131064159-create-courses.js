@@ -10,7 +10,9 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       courseName: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        llowNull: false,
+        unique: true,
       },
       courseContent: {
         type: Sequelize.TEXT

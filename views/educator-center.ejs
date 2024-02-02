@@ -1,49 +1,50 @@
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link rel="stylesheet" href="./css/styles.css">
+    <link rel="stylesheet" href="./css/new-styles.css"> <!-- Changed stylesheet -->
     <script src="https://cdn.tailwindcss.com"></script>
     <title><%= title %></title>
     
 </head>
 <body>
-    <div class="grid grid-cols-6">
-        <div class="col-start-3 col-span-2">
-            <%- include('header.ejs') %>
+    <div class="grid grid-cols-12"> <!-- Changed grid columns to 12 -->
+        <div class="col-start-4 col-span-6"> <!-- Adjusted column start and span -->
+            <%- include('header.ejs') %> <!-- Changed included header file -->
             
-            <div class="flex flex-row">
+            <div class="flex flex-row space-x-4 mt-6"> <!-- Updated flex container with spacing -->
                 <div class="m-3">
-                    <a href="/createcourse" class=" text-white text-center block bg-gray-600 rounded font-medium  px-4 py-4 hover:bg-gray-800  ">
+                    <a href="/createcourse" class="text-white bg-gray-600 rounded font-medium px-4 py-2 hover:bg-gray-800">
                         Create Course
                     </a>
                 </div>
                 <div class="m-3">
-                    <a href="/my-courses" class=" text-white text-center block bg-gray-600 rounded font-medium  px-4 py-4 hover:bg-gray-800"  >
+                    <a href="/my-courses" class="text-white bg-gray-600 rounded font-medium px-4 py-2 hover:bg-gray-800">
                         My Courses
                     </a>
                 </div>
-                
+                <div class="m-3">
+                    <a href="/view-report" class="text-white bg-purple-600 rounded font-medium px-4 py-2 hover:bg-purple-700">
+                        View Report
+                    </a>
+                </div>
             </div>
             
         </div>
     </div>
-    <div class="grid grid-cols-6 gap-2 py-4">
-      <div class="col-start-3 col-span-2">
-        <%- include('footer.ejs') %>
-        <a href="/signout" class="bg-red-600 hover:bg-red-800 text-white px-5 py-1.5 rounded font-medium mr-2 mb-2" >Signout</a>
-    </div> 
-    
-    <% if(messages && messages.error && messages.error.length > 0)  { %>
-        <% for(var i=0; i<messages.error.length; i++) { %>
-            <p class="bg-red-300 my-4 list-none rounded border-gray-50 px-4 py-2"><%= messages.error[i] %></p>
-        <% } %>
-    <% } %>
+    <div class="grid grid-cols-12 gap-4 py-8"> <!-- Adjusted grid columns and gap -->
+        <div class="col-start-4 col-span-6">
+            <%- include('footer.ejs') %> <!-- Changed included footer file -->
+            <a href="/signout" class="bg-red-600 hover:bg-red-800 text-white px-5 py-2 rounded font-medium mr-2 mb-2">Signout</a> <!-- Updated signout button style -->
+        </div> 
 
+        <% if(messages && messages.error && messages.error.length > 0)  { %>
+            <% for(var i=0; i<messages.error.length; i++) { %>
+                <p class="bg-red-300 my-4 list-none rounded border-gray-50 px-4 py-2"><%= messages.error[i] %></p>
+            <% } %>
+        <% } %>
     </div>
 </body>
 </html>

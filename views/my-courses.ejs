@@ -4,29 +4,39 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE-edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="./css/styles.css">
+    <link rel="stylesheet" href="/css/styles.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <title><%= title %></title>
 </head>
 <body>
-    <div class="grid grid-cols-4">
-        <div class="col-start-2 col-span-2">
-            <h2 class="text-2xl font-semibold py-1">My Courses:</h2>
-            <a href="/educator-center" class="text-blue-600 text-sm font-semibold border-b-2 py-2">Back to Dashboard</a>
-            <ul class="space-y-4">
+    <div class="grid grid-cols-6"> <!-- Adjusted grid columns to match the previous files -->
+        <div class="col-start-3 col-span-2"> <!-- Adjusted column start and span -->
+            <%- include('header.ejs') %>
+            <div class="py-4 text-lg font-semibold border-b-2 flex justify-between"> <!-- Updated styles for better consistency -->
+                <h2 class="text-3xl font-semibold">My Courses:</h2>
+                <h1 class="text-black-600 text-md font-semibold"><%= currentUser.firstName %> <%= currentUser.lastName %></h1>
+            </div>
+            <a href="/educator-center" class="text-blue-600 text-md font-semibold border-b-2 py-4 block">Back to Dashboard</a>
+            <ul class="space-y-6"> <!-- Adjusted space between list items -->
                 <% for (let course of courses) { %>
-                    <% if (course.userId === user.id) { %>
-                        <li>
-                            <div class="bg-white border border-gray-300 p-4 rounded-lg shadow hover:shadow-lg">
-                                <div class="flex items-center justify-between">
-                                    <h2 class="text-xl font-semibold m-2"><%= course.courseName %></h2>
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-gray-500 hover:text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                                    </svg>
+                    <% if (course.userId === currentUser.id) { %>
+                        <li class="my-6"> <!-- Adjusted margin for list items -->
+                            <a href="/view-course/<%= course.id %>">
+                                <div class="bg-white border border-gray-300 p-6 rounded-lg shadow hover:shadow-lg">
+                                    <div class="flex items-center justify-between">
+                                        <h2 class="text-2xl font-semibold mb-4"><%= course.courseName %></h2>
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-gray-500 hover:text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                        </svg>
+                                    </div>
+                                    <a href="/view-course/<%= course.id %>?currentUserId=<%= encodeURIComponent(currentUser.id) %>" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 mr-4">
+                                        View Course
+                                    </a>
+                                    <a href="/enrol-course/<%= course.id %>" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+                                        Enroll
+                                    </a>
                                 </div>
-                                <a href="/view-course/<%= course.id %>">View Course</a>
-                                <a href="/enrol-course/<%= course.id %>">Enroll now</a>
-                            </div>
+                            </a>
                         </li>
                     <% } %>
                 <% } %>

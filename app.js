@@ -1,3 +1,5 @@
+// app.js
+
 // module.exports = app;
 /*eslint-disable no-undef */
 const express = require("express");
@@ -11,7 +13,7 @@ const ConnectionSyncLogin = require("connect-ensure-login");
 const bcrypt = require("bcrypt");
 const flash = require("connect-flash");
 const saltRounds = 10;
-const { Users, Courses } = require("./models");
+const { Users, Courses ,Chapters ,Pages} = require("./models");
 
 
 app.set("view engine", "ejs");
@@ -36,8 +38,8 @@ app.use(
 
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(function (request, response, next) {
-  response.locals.messages = request.flash();
+app.use(function (req, res, next) {
+  res.locals.messages = req.flash();
   next();
 });
 
@@ -82,6 +84,7 @@ passport.serializeUser((user, done) => {
   done(null, user.id);
 });
 
+
 passport.deserializeUser((id, done) => {
   Users.findByPk(id)
     .then((user) => {
@@ -97,85 +100,87 @@ passport.deserializeUser((id, done) => {
 });
 
 
-// common setup routes
 
-// index route
-app.get("/", (request, response) => {
-  response.render("index", {
+// common setup routes
+app.get("/", (req, res) => {
+  if (req.isAuthenticated()) {
+    if (req.user.role == "teacher") {
+      return res.redirect("/eduator-center");
+    } else {
+      return res.redirect("/student-center");
+    }
+  }
+  res.render("index", {
     title: "LMS app",
   });
 });
 
+
 // signup route
-app.get("/signup", (_request, response) => {
-  response.render("signup", {
+app.get("/signup", (req, res) => {
+  res.render("signup", {
     title: "Signup",
   });
 });
 
 // login route
-app.get("/login", (_request, response) => {
-  response.render("login", {
+app.get("/login", (req, res) => {
+  res.render("login", {
     title: "Login",
   });
 });
 
-app.get("/login", (_req, res) => {
-  res.send("Login page here");
-});
-
-
 // /users route
 
-app.post("/users", async (request, response) => {
+app.post("/users", async (req, res) => {
 
-  if (!request.body.role) {
-    request.flash("error", "Role can't be empty!");
-    return response.redirect("/signup");
+  if (!req.body.role) {
+    req.flash("error", "Role can't be empty!");
+    return res.redirect("/signup");
   }
-  if (request.body.email.length == 0) {
-    request.flash("error", "Email can not be empty!");
-    return response.redirect("/signup");
-  }
-
-  if (request.body.firstName.length == 0) {
-    request.flash("error", "First name cannot be empty!");
-    return response.redirect("/signup");
+  if (req.body.email.length == 0) {
+    req.flash("error", "Email can not be empty!");
+    return res.redirect("/signup");
   }
 
-  if (request.body.lastName.length == 0) {
-    request.flash("error", "Last name cannot be empty!");
-    return response.redirect("/signup");
+  if (req.body.firstName.length == 0) {
+    req.flash("error", "First name cannot be empty!");
+    return res.redirect("/signup");
   }
 
-  if (request.body.password.length < 8) {
-    request.flash("error", "Password must be at least 8 characters");
-    return response.redirect("/signup");
+  if (req.body.lastName.length == 0) {
+    req.flash("error", "Last name cannot be empty!");
+    return res.redirect("/signup");
   }
 
-  const hashedPwd = await bcrypt.hash(request.body.password, saltRounds);
+  if (req.body.password.length < 8) {
+    req.flash("error", "Password must be at least 8 characters");
+    return res.redirect("/signup");
+  }
+
+  const hashedPwd = await bcrypt.hash(req.body.password, saltRounds);
 
   // create a user 
   try {
     const User = await Users.create({
-      firstName: request.body.firstName,
-      lastName: request.body.lastName,
-      email: request.body.email,
+      firstName: req.body.firstName,
+      lastName: req.body.lastName,
+      email: req.body.email,
       password: hashedPwd,
-      role: request.body.role,
+      role: req.body.role,
     });
-    request.login(User, (err) => {
+    req.login(User, (err) => {
       if (err) {
         console.log(err);
       }
 
       // Redirect the user based on their role selected
       if (User.role === "teacher") {
-        response.redirect("/educator-center");
+        res.redirect("/educator-center");
       } else if (User.role === "student") {
-        response.redirect("/student-center");
+        res.redirect("/student-center");
       } else {
-        response.redirect("/signup");
+        res.redirect("/signup");
       }
     });
   } catch (error) {
@@ -189,31 +194,33 @@ app.post(
     failureRedirect: "/login",
     failureFlash: true,
   }),
-  (request, response) => {
+  (req, res) => {
     // if authentication was successful
-    if (request.user.role === "student") {
-      response.redirect("/student-center");
-    } else if (request.user.role === "teacher") {
-      response.redirect("/educator-center");
+    if (req.user.role === "student") {
+      res.redirect("/student-center");
+    } else if (req.user.role === "teacher") {
+      res.redirect("/educator-center");
     } else {
       // if auth failed
-      response.redirect("/login");
+      res.redirect("/login");
     }
   }
 );
 
 //route to fetch all existing courses
 app.get(
-  [ "/educator-center"],
+  ["/educator-center"],
   ConnectionSyncLogin.ensureLoggedIn(),
   async (req, res) => {
+
+    const currentUser = req.user;
     try {
       // Fetch the existing courses 
       const existingCourses = await Courses.findAll();
-      console.log(existingCourses);
+
       res.render("educator-center", {
         title: "Educator Center",
-        courses: existingCourses,
+        courses: existingCourses,currentUser
       });
     } catch (error) {
       console.error(error);
@@ -221,21 +228,22 @@ app.get(
     }
   }
 );
-
-app.get("/createcourse", ConnectionSyncLogin.ensureLoggedIn(), async (req, res) => {
-  const currentUser = await Users.findByPk(req.user.id);
+// creating course 
+app.get("/createcourse",ConnectionSyncLogin.ensureLoggedIn(),async (req, res) => {
+    const currentUser = await Users.findByPk(req.user.id);
     res.render("createCourse", {
       title: "Create New Course",
       currentUser,
-      
     });
-});
+  },
+);
+
 
 
 app.post("/createcourse", ConnectionSyncLogin.ensureLoggedIn(), async (req, res) => {
   if (req.body.courseName.length == 0) {
     req.flash("error", "Course name cannot be empty!");
-    return res.redirect("/educator-center"); 
+    return res.redirect("/educator-center");
   }
   if (req.body.courseContent.length == 0) {
     req.flash("error", "Content field cannot be empty!");
@@ -259,35 +267,198 @@ app.post("/createcourse", ConnectionSyncLogin.ensureLoggedIn(), async (req, res)
 
 // Update your route handler to use retrieveCourses method
 app.get("/my-courses", ConnectionSyncLogin.ensureLoggedIn(), async (req, res) => {
+
+  if (!req.isAuthenticated()) {
+    return res.redirect("/login");
+  }
+
   try {
-    if (!req.isAuthenticated()) {
-      return res.redirect("/login");
-    }
-
-    const currentUser = await Users.findByPk(req.user.id); // Use req.user.id to get the current user's ID
-
+    const currentUser = req.user;
     if (!currentUser) {
-      return res.status(404).json({ message: "User not found" });
+
+      return res.status(404).json({ message: "User unable to  found" });
     }
+    
+    const userCourses = await currentUser.getCourses();
 
-    // Retrieve courses associated with the user using retrieveCourses method
-    const userCourses = await currentUser.retrieveCourses();
-
-    // Render the my-courses page and pass the user's courses to it
     res.render("my-courses", {
       title: "My Courses",
-      courses: userCourses,
-      user: currentUser,
+      courses: userCourses,currentUser,
     });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ message: "Internal server error", error: error.message });
+    return res.status(500).json({ message: "Internal server error" });
   }
 });
 
+app.get(
+  "/view-report",
+  ConnectionSyncLogin.ensureLoggedIn(),
+  async (req, res) => {
+    if (!req.isAuthenticated()) {
+      // Ensure the user is authenticated
+      return res.redirect("/login");
+    }
+
+    try {
+      // Retrieve the currently logged-in user
+      const currentUser = req.user;
+
+      if (!currentUser) {
+        // Handle cases where the user is not found
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      // Retrieve courses associated with the user
+      const userCourses = await currentUser.getCourses();
+
+      // Render the my-courses page and pass the user's courses to it
+      res.render("viewReport", {
+        title: "My Courses Report",
+        courses: userCourses,
+        currentUser,
+      });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ message: "Internal server error" });
+    }
+  },
+);
 
 
+app.get("/view-course/:id", async (req, res) => {
+  try {
+    const courseId = req.params.id;
+    const course = await Courses.findByPk(courseId);
+    const userofCourse = await Users.findByPk(course.userId);
+    const currentUserId = req.query.currentUserId;
+    const currentUser = await Users.findByPk(decodeURIComponent(currentUserId));
+    const chapters = await Chapters.findAll({ where: { courseId } });
 
+    if (!course) {
+      // Handle cases where the course is not found
+      return res.status(404).json({ message: "Course unable to  found" });
+    }
+    res.render("courseinfo", {
+      title: "Course Details",
+      course,
+      chapters,
+      userofCourse,
+      currentUser,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+app.get(
+  "/view-course/:id/createchapter",ConnectionSyncLogin.ensureLoggedIn(),async (req, res) => {
+    const courseId = req.params.id;
+    const course = await Courses.findByPk(courseId);
+    const userOfCourseId = course.userId;
+    const userOfCourse = await Users.findByPk(userOfCourseId);
+
+    const currentUserId = req.query.currentUserId;
+    const currentUser = await Users.findByPk(decodeURIComponent(currentUserId));
+
+    res.render("buildChapter", {
+      title: "Create A New Chapter",
+      courseId,
+      course,
+      userOfCourse,
+      currentUser,
+    });
+  },
+);
+
+app.post(
+  "/view-course/:id/createchapter",ConnectionSyncLogin.ensureLoggedIn(),async (req, res) => {
+    const courseId = req.body.courseId;
+    if (req.body.chapterName.length == 0) {
+      req.flash("error", "Chapter name cannot be empty!");
+      return res.redirect(
+        `/view-course/${req.body.courseId}?currentUserId=${req.query.currentUserId}`,
+      );
+    }
+    if (req.body.chapterContent.length == 0) {
+      req.flash("error", "Content can't be empty!");
+      return res.redirect(
+        `/view-course/${req.body.courseId}?currentUserId=${req.query.currentUserId}`,
+      );
+    }
+    try {
+      await Chapters.create({
+        chapterName: req.body.chapterName,
+        chapterContent: req.body.chapterContent,
+        courseId,
+      });
+      res.redirect(
+        `/view-course/${req.body.courseId}?currentUserId=${req.query.currentUserId}`,
+      );
+    } catch (error) {
+      console.log(error);
+      return res.status(422).json(error);
+    }
+  },
+);
+
+app.get(
+  "/view-chapter/:id/createpage",ConnectionSyncLogin.ensureLoggedIn(),async (req, res) => {
+    const chapterId = req.params.id;
+    const chapter = await Chapters.findByPk(chapterId);
+    const courseId = chapter.courseId;
+    const course = await Courses.findByPk(courseId);
+    const userOfCourseId = course.userId;
+    const userOfCourse = await Users.findByPk(userOfCourseId);
+    const currentUserId = req.query.currentUserId;
+    const currentUser = await Users.findByPk(decodeURIComponent(currentUserId));
+    const pages = await Pages.findAll({ where: { chapterId } });
+
+    res.render("createPage", {
+      title: "Create New Page",
+      chapterId,
+      chapter,
+      pages,
+      course,
+      userOfCourse,
+      currentUser,
+    });
+  },
+);
+
+app.post(
+  "/view-chapter/:id/createpage",ConnectionSyncLogin.ensureLoggedIn(),async (req, res) => {
+    if (req.body.pageName.length == 0) {
+      req.flash("error", "Page name cannot be empty!");
+      return res.redirect(
+        `/view-chapter/${req.body.chapterId}/createpage?currentUserId=${req.query.currentUserId}`,
+      );
+    }
+
+    if (req.body.pageContent.length == 0) {
+      req.flash("error", "Page content cannot be empty!");
+      return res.redirect(
+        `/view-chapter/${req.body.chapterId}/createpage?currentUserId=${req.query.currentUserId}`,
+      );
+    }
+
+    try {
+      await Pages.create({
+        title: req.body.pageName,
+        content: req.body.pageContent,
+        chapterId: req.body.chapterId,
+      });
+
+      res.redirect(
+        `/view-chapter/${req.body.chapterId}/createpage?currentUserId=${req.query.currentUserId}`,
+      );
+    } catch (error) {
+      console.log(error);
+      return res.status(422).json(error);
+    }
+  },
+);
 
 
 app.get(

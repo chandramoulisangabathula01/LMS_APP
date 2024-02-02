@@ -1,3 +1,4 @@
+// /models/chapteres.js
 'use strict';
 const {
   Model
@@ -5,7 +6,15 @@ const {
 module.exports = (sequelize, DataTypes) => {
   class Chapters extends Model {
     static associate(models) {
-      // define association here
+
+      Chapters.belongsTo(models.Courses, {
+        foreignKey: "courseId",
+      });
+
+      Chapters.hasMany(models.Pages, {
+        foreignKey: "chapterId",
+      });
+      
     }
   }
   Chapters.init({
