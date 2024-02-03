@@ -125,7 +125,7 @@ app.get("/", (req, res) => {
 
 
 // signup route
-app.get("/signup", (req, res) => {
+app.get("/signup", async (req, res) => {
   res.render("signup", {
     title: "Signup",
     csrfToken: req.csrfToken(),
@@ -439,11 +439,15 @@ app.get(
     const currentUserId = req.query.currentUserId;
     const currentUser = await Users.findByPk(decodeURIComponent(currentUserId));
     const pages = await Pages.findAll({ where: { chapterId } });
+    const existingEnrollments = await Enrollments.findAll();
+
+
 
     res.render("createPage", {
       title: "Create New Page",
       chapterId,chapter,pages,course,
       userOfCourse,currentUser,
+      existingEnrollments,
       csrfToken: req.csrfToken(),
     });
   },
