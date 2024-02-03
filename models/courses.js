@@ -17,11 +17,24 @@ module.exports = (sequelize, DataTypes) => {
     {
       courseName: DataTypes.STRING,
       courseContent: DataTypes.TEXT,
+      
+      created_at: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        defaultValue: sequelize.literal('CURRENT_TIMESTAMP'),
+      },
+      updated_at: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        defaultValue: sequelize.literal('CURRENT_TIMESTAMP'),
+      },
     },
     {
       sequelize,
-      modelName: "Courses",
-    },
+      modelName: 'Courses',
+      timestamps: true, // Enable timestamps
+      // other options...
+    }
   );
   return Courses;
 };

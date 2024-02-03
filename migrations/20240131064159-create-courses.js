@@ -2,7 +2,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('courses', {
+    await queryInterface.createTable('Courses', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -11,24 +11,33 @@ module.exports = {
       },
       courseName: {
         type: Sequelize.STRING,
-        llowNull: false,
+        allowNull: false,
         unique: true,
       },
       courseContent: {
         type: Sequelize.TEXT
       },
-      created_at: {
+      // created_at: {
+      //   allowNull: false,
+      //   defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
+      //   type: Sequelize.DATE
+      // },
+      // updated_at: {
+      //   allowNull: false,
+      //   type: Sequelize.DATE
+      // },
+      createdAt: {
         allowNull: false,
         defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
         type: Sequelize.DATE
       },
-      updated_at: {
+      updatedAt: {
         allowNull: false,
         type: Sequelize.DATE
       }
     });
   },
   async down(queryInterface,) {
-    await queryInterface.dropTable('courses');
+    await queryInterface.dropTable('Courses');
   }
 };

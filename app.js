@@ -353,7 +353,7 @@ app.get("/view-course/:id", async (req, res) => {
 });
 
 app.get(
-  "/view-course/:id/createchapter",ConnectionSyncLogin.ensureLoggedIn(),async (req, res) => {
+  "/view-course/:id/buildChapter",ConnectionSyncLogin.ensureLoggedIn(),async (req, res) => {
     const courseId = req.params.id;
     const course = await Courses.findByPk(courseId);
     const userOfCourseId = course.userId;

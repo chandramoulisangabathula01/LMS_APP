@@ -11,7 +11,7 @@
 <body>
     <div class="grid grid-cols-12"> <!-- Changed grid columns to 12 -->
         <div class="col-start-4 col-span-6"> <!-- Adjusted column start and span -->
-            <%- include ('new-header.ejs') %> <!-- Changed included header file -->
+            <%- include ('header.ejs') %> <!-- Changed included header file -->
             <div class="py-2 text-sm font-semibold border-b-2 flex justify-between items-center"> <!-- Updated container style -->
                 <a href="/view-course/<%= course.id %>?currentUserId=<%= currentUser.id %>" class="text-blue-600 text-sm font-semibold border-b-2 py-2">Back to Course</a>
                 <h1 class="text-black-600 text-sm font-semibold"><%= currentUser.firstName %> <%= currentUser.lastName %> </h1>
