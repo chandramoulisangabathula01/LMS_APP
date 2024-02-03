@@ -4,8 +4,10 @@
 /*eslint-disable no-undef */
 const express = require("express");
 const app = express();
+const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
 const path = require("path");
+const csrf = require("tiny-csrf");
 const session = require("express-session");
 const passport = require("passport");
 const LocalStrategy = require("passport-local");
@@ -13,14 +15,21 @@ const ConnectionSyncLogin = require("connect-ensure-login");
 const bcrypt = require("bcrypt");
 const flash = require("connect-flash");
 const saltRounds = 10;
-const { Users, Courses ,Chapters ,Pages} = require("./models");
+// const { Users, Courses ,Chapters ,Pages,Enrollments} = require("./models");
+// const { Users, Courses, Chapters, Pages, Enrollments } = require("./models");
+const { Users, Courses, Chapters, Pages, Enrollments } = require("./models");
+const enrollments = require("./models/enrollments");
+
+
 
 
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser("baby shark doo doo baby shark!:-O"));
 app.use(bodyParser.json());
+app.use(csrf("this_should_be_32_character_long", ["POST", "PUT", "DELETE"]));
 app.use(flash());
 
 // Configure session middleware
@@ -112,6 +121,7 @@ app.get("/", (req, res) => {
   }
   res.render("index", {
     title: "LMS app",
+    csrfToken: req.csrfToken(),
   });
 });
 
@@ -120,6 +130,7 @@ app.get("/", (req, res) => {
 app.get("/signup", (req, res) => {
   res.render("signup", {
     title: "Signup",
+    csrfToken: req.csrfToken(),
   });
 });
 
@@ -127,6 +138,7 @@ app.get("/signup", (req, res) => {
 app.get("/login", (req, res) => {
   res.render("login", {
     title: "Login",
+    csrfToken: req.csrfToken(),
   });
 });
 
@@ -217,10 +229,17 @@ app.get(
     try {
       // Fetch the existing courses 
       const existingCourses = await Courses.findAll();
+      const existingUsers = await Users.findAll();
+      const existingEnrollments = await Enrollments.findAll();
 
       res.render("educator-center", {
         title: "Educator Center",
-        courses: existingCourses,currentUser
+        courses: existingCourses,
+        users: existingUsers,
+        currentUser,
+        enrols: existingEnrollments,
+        csrfToken: req.csrfToken(),
+
       });
     } catch (error) {
       console.error(error);
@@ -234,6 +253,7 @@ app.get("/createcourse",ConnectionSyncLogin.ensureLoggedIn(),async (req, res) =>
     res.render("createCourse", {
       title: "Create New Course",
       currentUser,
+      csrfToken: req.csrfToken(),
     });
   },
 );
@@ -284,12 +304,15 @@ app.get("/my-courses", ConnectionSyncLogin.ensureLoggedIn(), async (req, res) =>
     res.render("my-courses", {
       title: "My Courses",
       courses: userCourses,currentUser,
+      csrfToken: req.csrfToken(),
     });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "Internal server error" });
   }
 });
+
+
 
 app.get(
   "/view-report",
@@ -314,9 +337,9 @@ app.get(
 
       // Render the my-courses page and pass the user's courses to it
       res.render("viewReport", {
-        title: "My Courses Report",
-        courses: userCourses,
-        currentUser,
+        title: `${currentUser.firstName}'s Courses Report`,
+        courses: userCourses,currentUser,
+        csrfToken: req.csrfToken(),
       });
     } catch (error) {
       console.error(error);
@@ -333,6 +356,7 @@ app.get("/view-course/:id", async (req, res) => {
     const userofCourse = await Users.findByPk(course.userId);
     const currentUserId = req.query.currentUserId;
     const currentUser = await Users.findByPk(decodeURIComponent(currentUserId));
+    const enrols = await Enrollments.findAll();
     const chapters = await Chapters.findAll({ where: { courseId } });
 
     if (!course) {
@@ -345,6 +369,8 @@ app.get("/view-course/:id", async (req, res) => {
       chapters,
       userofCourse,
       currentUser,
+      enrols, 
+      csrfToken: req.csrfToken(),
     });
   } catch (error) {
     console.error(error);
@@ -368,6 +394,7 @@ app.get(
       course,
       userOfCourse,
       currentUser,
+      csrfToken: req.csrfToken(),
     });
   },
 );
@@ -417,12 +444,9 @@ app.get(
 
     res.render("createPage", {
       title: "Create New Page",
-      chapterId,
-      chapter,
-      pages,
-      course,
-      userOfCourse,
-      currentUser,
+      chapterId,chapter,pages,course,
+      userOfCourse,currentUser,
+      csrfToken: req.csrfToken(),
     });
   },
 );
@@ -461,12 +485,89 @@ app.post(
 );
 
 
-app.get(
-  "/student-center",
+app.get("/student-center",ConnectionSyncLogin.ensureLoggedIn(),
+  async (req, res) => {
+    const currentUser = req.user;
+    try {
+      const existingCourses = await Courses.findAll();
+      const existingUsers = await Users.findAll();
+      const existingEnrollments = await Enrollments.findAll();
+      res.render("student-center", {
+        title: "Student Center",
+        courses: existingCourses,
+        users: existingUsers,
+        currentUser,
+        enrols: existingEnrollments,
+        csrfToken: req.csrfToken(),
+      });
+    } catch (error) {
+      console.error(error);
+      return res.status(422).json(error);
+    }
+  },
+);
+
+app.delete(
+  "/courses/:id",
   ConnectionSyncLogin.ensureLoggedIn(),
-  (req, res) => {
-    res.render("student-center",);
-  }
+  async (req, res) => {
+    console.log("We have to delete a course with ID: ", req.params.id);
+
+    try {
+      const status = await Courses.remove(req.params.id);
+      return res.json(status ? true : false);
+    } catch (err) {
+      return res.status(422).json(err);
+    }
+  },
+);
+
+app.post(
+  "/enrol-course/:courseId",
+  ConnectionSyncLogin.ensureLoggedIn(),
+  async (req, res) => {
+    const courseId = req.params.courseId;
+    const currentUserId = req.query.currentUserId;
+    const existingEnrollment = await Enrollments.findOne({
+      where: { userId: currentUserId, courseId },
+    });
+    if (existingEnrollment) { return res
+        .status(400)
+        .json({ message: "Already enrolled." });
+    }
+
+    await Enrollments.create({
+      userId: currentUserId,courseId,
+      noOfChapCompleted: 0,totChapInTheCourse: 0,
+    });
+    res.redirect("/student-center");
+  },
+);
+
+// show all enrolled courses
+app.get(
+  "/MyCourses",
+  ConnectionSyncLogin.ensureLoggedIn(),
+  async (req, res) => {
+    const currentUser = req.user;
+    try {
+      const enrolledCourses = await Enrollments.findAll({
+        where: { userId: currentUser.id },
+      });
+      const courseIds = enrolledCourses.map(
+        (enrollment) => enrollment.courseId,
+      );
+      const courses = await Courses.findAll({ where: { id: courseIds } });
+      res.render("studentMyCourses", {
+        title: `${currentUser.firstName}'s Enrolled Courses`,
+        courses: courses,currentUser,
+        csrfToken: req.csrfToken(),
+      });
+    } catch (error) {
+      console.error(error);
+      return res.status(422).json(error);
+    }
+  },
 );
 
 app.get("/signout", (req, res, next) => {

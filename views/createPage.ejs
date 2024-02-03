@@ -4,25 +4,27 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE-edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- <link rel="stylesheet" href="./css/styles.css"> -->
+    <meta name="csrf-token" content="<%= csrfToken %>">
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="./css/styles.css">
     <title><%= title %></title>
 </head>
 <body>
-    <div class="grid grid-cols-12"> <!-- Changed grid columns to 12 -->
-        <div class="col-start-4 col-span-6"> <!-- Adjusted column start and span -->
-            <%- include ('header.ejs') %> <!-- Changed included header file -->
-            <div class="py-2 text-sm font-semibold border-b-2 flex justify-between items-center"> <!-- Updated container style -->
+    <div class="grid grid-cols-12"> 
+        <div class="col-start-4 col-span-6"> 
+            <%- include ('header.ejs') %> 
+            <div class="py-2 text-sm font-semibold border-b-2 flex justify-between items-center">
                 <a href="/view-course/<%= course.id %>?currentUserId=<%= currentUser.id %>" class="text-blue-600 text-sm font-semibold border-b-2 py-2">Back to Course</a>
                 <h1 class="text-black-600 text-sm font-semibold"><%= currentUser.firstName %> <%= currentUser.lastName %> </h1>
             </div>
-            <h1 class="text-black-600 text-2xl font-semibold border-b-2 py-2 mb-2">
+            <h1 class="text-black text-2xl font-semibold border-b-2 py-2 mb-2">
+                <strong>Course: </strong> <%= course.courseName %> <br>
                 <strong>Chapter: </strong> <%= chapter.chapterName %>
             </h1>
-            <!-- Available pages -->
+            
             <ol class="space-y-4 list-decimal m-4">
                 <% if (pages.length === 0) { %>
-                    <h3 class="mb-5 text-2xl text-gray-600">---No pages available</h3>
+                    <h3 class="mb-5 text-2xl text-gray-600">pages Unavailable</h3>
                 <% } else { %>
                     <% for (let page of pages) { %>
                         <li class="mb-5">
@@ -39,6 +41,7 @@
             <% if(userOfCourse.id === currentUser.id) { %>
                 <h1 class="text-black-600 text-2xl font-semibold border-t-2 bg-green-100 border-b-2 py-2 mt-6 mb-2">Create a New Page</h1>
                 <form action="/view-chapter/<%= chapterId %>/createpage?currentUserId=<%= currentUser.id %>" method="post" autocomplete="on" class="m-3">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                     <input type="hidden" name="chapterId" value="<%= chapterId %>">
                     <div class="py-4">
                         <label for="pageName" class="text-gray-900 text-lg">Page Title:</label>

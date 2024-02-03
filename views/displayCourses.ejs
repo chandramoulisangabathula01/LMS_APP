@@ -1,20 +1,31 @@
 <div class="py-4">
-    <h2 class="text-3xl font-bold py-2">Explore Available Courses:</h2> <!-- Updated heading style -->
-    <ul class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"> <!-- Changed list style to a grid with responsive columns -->
+    <h2 class="text-3xl font-bold py-2">Explore Available Courses:</h2> 
         <% for (let course of courses) { %>
-        <li class="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300"> <!-- Updated list item style -->
-            <a href="/view-course/<%= course.id %>">
+        <li class="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300">
+            <a href="/view-course/<%= course.id %>?currentUserId=<%= encodeURIComponent(currentUser.id) %>">
                 <div class="p-4">
-                    <h3 class="text-xl font-semibold mb-2"><%= course.courseName %></h3> <!-- Updated course name style -->
-                    <p class="text-gray-600 mb-4"><%= course.courseContent %></p> <!-- Updated course content style -->
-                    <div class="flex justify-between">
-                        <a href="/view-course/<%= course.id %>" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
+                    <h3 class="text-xl font-semibold mb-2"><%= course.courseName %></h3>
+                    <% for(let user of users) { %>
+                        <% if(user.id === course.userId) { %>
+                            <h3 class="text-md font-bold ml-3 mt-2 mb-3"> by <%= user.firstName %> <%= user.lastName %></h3>
+                        <% } %>
+                    <% } %>
+                    <% const isEnrolled = enrols.some(enrollment => enrollment.userId === currentUser.id && enrollment.courseId === course.id); %>
+                    <% if (isEnrolled) { %>
+                        <button class="bg-gray-700 text-white px-3 py-1 rounded mx-2" disabled>Enrolled</button>
+                    <% } else { %>
+                        <a href="/view-course/<%= course.id %>?currentUserId=<%= encodeURIComponent(currentUser.id) %>" class="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 mx-2">
                             View Course
                         </a>
-                        <a href="/enrol-course/<%= course.id %>" class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700">
-                            Enroll
-                        </a>
-                    </div>
+                        <form method="POST" action="/enrol-course/<%= course.id %>?currentUserId=<%= encodeURIComponent(currentUser.id) %>" style="display: inline;">
+                            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                            <% if (currentUser.role === "student") { %>
+                                <button type="submit" class="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 mx-2">
+                                    Enrol
+                                </button>
+                            <% } %>
+                        </form>
+                    <% } %>
                 </div>
             </a>
         </li>
