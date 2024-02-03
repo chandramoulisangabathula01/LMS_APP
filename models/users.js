@@ -10,7 +10,7 @@ module.exports = (sequelize, DataTypes) => {
   }
   Users.init(
     {
-      firstName: DataTypes.STRING,
+    firstName: DataTypes.STRING,
     lastName: DataTypes.STRING,
     email: {
       type: DataTypes.STRING,
@@ -22,7 +22,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     {
       sequelize,
-      modelName: "Users",
+      modelName: 'Users',
     },
   );
   return Users;
