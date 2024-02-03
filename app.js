@@ -15,10 +15,8 @@ const ConnectionSyncLogin = require("connect-ensure-login");
 const bcrypt = require("bcrypt");
 const flash = require("connect-flash");
 const saltRounds = 10;
-// const { Users, Courses ,Chapters ,Pages,Enrollments} = require("./models");
-// const { Users, Courses, Chapters, Pages, Enrollments } = require("./models");
 const { Users, Courses, Chapters, Pages, Enrollments } = require("./models");
-const enrollments = require("./models/enrollments");
+
 
 
 
