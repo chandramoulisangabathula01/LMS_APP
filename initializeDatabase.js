@@ -2,8 +2,8 @@
 
 const Sequelize = require("sequelize");
 
-// const database = "LMS_APP_DB";
-const database = "lms-app-dev"
+const database = "LMS_APP_DB";
+// const database = "lms-app-dev"
 const username = "postgres";
 const password = "123456";
 
