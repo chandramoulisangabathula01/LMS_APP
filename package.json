@@ -8,7 +8,7 @@
     "start": "nodemon index.js",
     "start:prod":"node index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "prepare": "cd ..&& husky install LMS_APP/.husky"
+    "prepare": "husky install"
   },
   "author": "chandramouli <chandramoulisangabathula01>",
   "license": "ISC",
