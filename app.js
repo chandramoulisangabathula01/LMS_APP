@@ -19,7 +19,7 @@ const { Users, Courses, Chapters, Pages, Enrollments } = require("./models");
 
 
 
-
+// app.set and app.use
 
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
@@ -31,6 +31,7 @@ app.use(csrf("this_should_be_32_character_long", ["POST", "PUT", "DELETE"]));
 app.use(flash());
 
 // Configure session middleware
+
 app.use(
   session({
     secret: "super-secret-key-345636636633878999023",
@@ -39,7 +40,6 @@ app.use(
     },
   })
 );
-
 
 // passport initialize and app.use
 
@@ -106,9 +106,8 @@ passport.deserializeUser((id, done) => {
     });
 });
 
-
-
 // common setup routes
+
 app.get("/", (req, res) => {
   if (req.isAuthenticated()) {
     if (req.user.role == "teacher") {
@@ -218,6 +217,7 @@ app.post(
 );
 
 //route to fetch all existing courses
+
 app.get(
   ["/educator-center"],
   ConnectionSyncLogin.ensureLoggedIn(),
@@ -245,7 +245,9 @@ app.get(
     }
   }
 );
+
 // creating course 
+
 app.get("/createcourse",ConnectionSyncLogin.ensureLoggedIn(),async (req, res) => {
     const currentUser = await Users.findByPk(req.user.id);
     res.render("createCourse", {
@@ -255,7 +257,6 @@ app.get("/createcourse",ConnectionSyncLogin.ensureLoggedIn(),async (req, res) =>
     });
   },
 );
-
 
 
 app.post("/createcourse", ConnectionSyncLogin.ensureLoggedIn(), async (req, res) => {
@@ -284,6 +285,7 @@ app.post("/createcourse", ConnectionSyncLogin.ensureLoggedIn(), async (req, res)
 
 
 // Update your route handler to use retrieveCourses method
+
 app.get("/my-courses", ConnectionSyncLogin.ensureLoggedIn(), async (req, res) => {
 
   if (!req.isAuthenticated()) {
@@ -311,6 +313,7 @@ app.get("/my-courses", ConnectionSyncLogin.ensureLoggedIn(), async (req, res) =>
 });
 
 
+// view report
 
 app.get(
   "/view-report",
@@ -346,6 +349,7 @@ app.get(
   },
 );
 
+// is used to identify the course information
 
 app.get("/view-course/:id", async (req, res) => {
   try {
@@ -375,6 +379,8 @@ app.get("/view-course/:id", async (req, res) => {
     return res.status(500).json({ message: "Internal server error" });
   }
 });
+
+// Build A New Chapters
 
 app.get(
   "/view-course/:id/buildChapter",ConnectionSyncLogin.ensureLoggedIn(),async (req, res) => {
@@ -427,6 +433,9 @@ app.post(
     }
   },
 );
+
+
+// Create A New Page
 
 app.get(
   "/view-chapter/:id/createpage",ConnectionSyncLogin.ensureLoggedIn(),async (req, res) => {
@@ -486,6 +495,7 @@ app.post(
   },
 );
 
+// Student Center
 
 app.get("/student-center",ConnectionSyncLogin.ensureLoggedIn(),
   async (req, res) => {
@@ -509,6 +519,8 @@ app.get("/student-center",ConnectionSyncLogin.ensureLoggedIn(),
   },
 );
 
+// Delete A Course
+
 app.delete(
   "/courses/:id",
   ConnectionSyncLogin.ensureLoggedIn(),
@@ -523,6 +535,8 @@ app.delete(
     }
   },
 );
+
+// enroll in a course
 
 app.post(
   "/enrol-course/:courseId",
@@ -547,6 +561,7 @@ app.post(
 );
 
 // show all enrolled courses
+
 app.get(
   "/MyCourses",
   ConnectionSyncLogin.ensureLoggedIn(),
@@ -572,8 +587,10 @@ app.get(
   },
 );
 
+//signout
+
 app.get("/signout", (req, res, next) => {
-  //signout
+  
   req.logout((err) => {
     if (err) {
       return next(err);

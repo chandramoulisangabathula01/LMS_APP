@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -9,22 +10,25 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <title><%= title %></title>
 </head>
+
 <body>
     <div class="grid grid-cols-4">
         <div class="col-start-2 col-span-2">
-            <%- include ('header.ejs') %>
-            <div class="py-6  mx-8 my-4 flex flex-colbg-gray-100 rounded-lg shadow-md">
+            <%- include('header.ejs') %>
+            <div class="py-6 mx-8 my-4 flex flex-col bg-gray-100 rounded-lg shadow-md">
                 <div class="border-b-2 flex py-4 m-2 justify-between items-center">
-                    <h1 class="text-2xl font-bold text-blue-800">Greetings, <br> <%= currentUser.firstName %> <%= currentUser.lastName %> </h1>
-                    <a href="/signout" class="text-red-500 text-base font-semibold hover:underline">Logout</a>
+                    <h1 class="text-2xl font-bold text-blue-800">
+                        Greetings, <br> <%= currentUser.firstName %> <%= currentUser.lastName %>
+                    </h1>
+                    <a href="/signout" class="text-white rounded px-3 py-2 text-base font-semibold bg-red-500 hover:bg-red-600">Logout</a>
                 </div>
                 <div class="border-b-2 m-2">
-                    <h1 class="text-3xl text-green-600 font-extrabold  m-1">
+                    <h1 class="text-3xl text-green-600 font-extrabold m-1">
                         Elevate Your Skills: Start Your Learning Journey Now!
                     </h1>
                     <p class="text-lg text-gray-700 m-2">
                         Immerse yourself in a wealth of knowledge. Explore our array of courses and commence your journey to excellence.
-                    </p>                
+                    </p>
                 </div>
                 <div class="m-2">
                     <a href="/MyCourses" class="bg-purple-600 text-white px-6 py-3 rounded-full font-medium hover:bg-purple-700 text-center block">
@@ -33,14 +37,15 @@
                 </div>
                 <hr class="my-4 border-t-2 border-black-400">
             </div>
-            <%- include ('displayCourses.ejs', { currentUser,courses,users,enrols:enrols }) %>
+            <%- include('displayCourses.ejs', { currentUser, courses, users, enrols: enrols }) %>
 
-            <% if(messages && messages.error && messages.error.length > 0)  { %>
-                <% for(var i=0; i<messages.error.length; i++) { %>
-                    <p class="bg-red-400 rounded-md  my-4 p-3  text-white"><%= messages.error[i] %></p>
+            <% if (messages && messages.error && messages.error.length > 0) { %>
+                <% for (var i = 0; i < messages.error.length; i++) { %>
+                    <p class="bg-red-400 rounded-md my-4 p-3 text-white"><%= messages.error[i] %></p>
                 <% } %>
             <% } %>
         </div>
     </div>
 </body>
+
 </html>

@@ -4,10 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "db:create:test": "NODE_ENV=test npx sequelize-cli db:create",
-    "start": "nodemon index.js",
-    "start:prod":"node index.js ",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon -e js, ejs",
+    "start:prod": "node index.js ",
+    "pretest": "NODE_ENV=test npx sequelize-cli db:drop && NODE_ENV=test npx sequelize-cli db:create",
+    "test": "NODE_ENV=test jest --detectOpenHandles",
     "prepare": "husky install"
   },
   "author": "chandramouli <chandramoulisangabathula01>",
@@ -33,10 +33,12 @@
   "devDependencies": {
     "eslint": "^8.56.0",
     "husky": "^9.0.7",
+    "jest": "^29.7.0",
     "lint-staged": "^15.2.0",
     "nodemon": "^3.0.3",
     "prettier": "^3.2.4",
-    "sequelize-cli": "^6.6.2"
+    "sequelize-cli": "^6.6.2",
+    "supertest": "^6.3.4"
   },
   "lint-staged": {
     "*.js": [
