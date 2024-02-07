@@ -17,9 +17,9 @@ Enrolled-courses-progress
 Resetpassword
 ![Resetpassword](./images/Resetpassword.png)
 
-# live link
-## live link of application : [LMS_APP](https://lms-app-1v5f.onrender.com)
+# Live Link
+## Live link of application : [LMS_APP](https://lms-app-1v5f.onrender.com)
 
-# demo Video
-## demo video : [Video](https://www.loom.com/share/348a43b4fdc24e72a5027a3212b0b53d?sid=132c3243-1107-4ca9-ab21-3dca8d2fc9b6)
+# Demo Video
+## Demo Video : [Video](https://www.loom.com/share/348a43b4fdc24e72a5027a3212b0b53d?sid=132c3243-1107-4ca9-ab21-3dca8d2fc9b6)
 
