@@ -12,9 +12,9 @@
 </head>
 
 <body>
+    <%- include("header.ejs") %> 
     <div class="grid grid-cols-12"> 
         <div class="col-start-4 col-span-6">
-            <%- include("header.ejs") %> 
             <h2 class="text-3xl font-semibold my-4">Welcome back! Login to your account</h2>
             <form action="/logging" method="post">
                 <input type="hidden" name="_csrf" value="<%= csrfToken %>">
@@ -25,6 +25,7 @@
                 <div class="py-3">
                     <label for="password" class="text-gray-800">Password:</label>
                     <input type="password" name="password" id="password" class="border border-gray-700 text-gray-700 rounded p-2 w-full">
+                    <h1><%- include ('forgotPassword.ejs') %></h1>
                 </div>
                 <div class="py-3">
                     <button type="submit" class="text-white bg-blue-500 hover:bg-blue-400 font-medium rounded px-5 py-2">Sign in</button> 
@@ -37,6 +38,7 @@
             <% } %>
         </div>
     </div>
+    <%- include ('footer.ejs') %>
 </body>
 
 </html>

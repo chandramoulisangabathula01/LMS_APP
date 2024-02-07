@@ -1,40 +1,48 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE-edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="<%= csrfToken %>">
-    <link rel="stylesheet" href="./css/styles.css">
-    <script src="https://cdn.tailwindcss.com"></script>
     <title><%= title %></title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
-<body>
-    <div class="grid grid-cols-4">
-        <div class="col-start-2 col-span-2">
-            <%- include ('header.ejs') %>
-            <div class="py-2 text-sm font-semibold border-b-2" style="display: flex; justify-content: space-between;">
-                <a href="/view-course/<%= course.id %>?currentUserId=<%= currentUser.id %>" class="text-blue-600 text-sm font-semibold border-b-2 ">Back to Course</a>
-                <h1 class="text-black-600 text-sm font-semibold"><%= currentUser.firstName %> <%= currentUser.lastName %> </h1>
-            </div>
-            <h1 class="text-black-600 text-2xl font-semibold border-b-2 py-2 mb-2"><strong>Course: </strong> <%= course.courseName %></h1>
-            <h1 class="text-black-600 text-2xl font-semibold border-b-2 py-2 mb-2">Create a New Chapter</h1>
+
+<body class="bg-gray-100">
+
+    
+    <%- include ('header.ejs') %>
+
+    <main class="container mx-auto py-8 px-4">
+
+        <div class="mb-8 text-center">
+            <a href="/view-course/<%= course.id %>?currentUserId=<%= currentUser.id %>" class="bg-gray-500 text-white px-6 py-3 rounded-md hover:bg-gray-700 transition duration-300 ease-in-out">Back to Course</a>
+        </div>
+
+        <div class="bg-white shadow-md rounded-lg p-8 max-w-md mx-auto">
+            <h2 class="text-2xl font-semibold mb-4">Course: <%= course.courseName %></h2>
             <form action="/view-course/<%= courseId %>/createchapter?currentUserId=<%= currentUser.id %>" method="post" autocomplete="on">
                 <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                 <input type="hidden" name="courseId" value="<%= courseId %>">
-                <div class="py-4">
-                    <label for="chapterName" class="text-gray-900 text-lg">Chapter Name:</label>
-                    <input type="text" name="chapterName" id="chapterName" class="border border-gray-300 rounded p-2 w-full text-gray-900 text-lg" required />
+                <div class="mb-4">
+                    <label for="chapterName" class="block text-gray-700 text-lg font-semibold">Chapter Name:</label>
+                    <input type="text" name="chapterName" id="chapterName" class="mt-1 block w-full border border-gray-300 rounded-md p-2 text-gray-900 text-lg" required />
                 </div>
-                <div class="py-4">
-                    <label for="chapterContent" class="text-gray-900 text-lg">Chapter Content:</label>
-                    <textarea name="chapterContent" id="chapterContent" class="border border-gray-300 rounded p-2 w-full h-36 text-gray-900 text-lg" required></textarea>
+                <div class="mb-4">
+                    <label for="chapterContent" class="block text-gray-700 text-lg font-semibold">Chapter Content:</label>
+                    <textarea name="chapterContent" id="chapterContent" class="mt-1 block w-full border border-gray-300 rounded-md p-2 text-gray-900 text-lg h-36" required></textarea>
                 </div>
-                <div class="py-4">
-                    <button type="submit" class="bg-green-600 text-white px-5 py-2 rounded font-medium hover:bg-green-700">Create Chapter</button>
+                <div>
+                    <button type="submit" class="bg-green-600 text-white px-6 py-3 rounded-md font-semibold hover:bg-green-700 transition duration-300 ease-in-out">Create Chapter</button>
                 </div>
             </form>
         </div>
-    </div>
+
+    </main>
+
+    <%- include ('footer.ejs') %>
+
 </body>
+
 </html>

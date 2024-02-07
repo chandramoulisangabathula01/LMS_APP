@@ -2,61 +2,97 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="csrf-token" content="<%= csrfToken %>">
-  <link rel="stylesheet" href="./css/new-styles.css">
-  <script src="https://cdn.tailwindcss.com"></script>
-  <title><%= title %></title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="<%= csrfToken %>">
+    <title>
+        <%= title %>
+    </title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="./css/styles.css">
 </head>
 
 <body class="bg-gray-100">
 
-  <div class="grid grid-cols-12">
-    <div class="col-start-4 col-span-6">
-      <%- include('header.ejs') %>
+    <%- include ('header.ejs') %>
+   
+    <main class="container mx-auto py-8 px-4">
 
-      <div class="flex flex-row space-x-4 mt-6 justify-center">
-        <div class="m-3">
-          <a href="/createcourse"
-            class="text-white bg-blue-500 rounded-md font-medium px-4 py-2 hover:bg-blue-600 focus:outline-none focus:shadow-outline-blue active:bg-blue-800">
-            Create Course
-          </a>
+        <!-- Call to Action Buttons -->
+        <div class="flex justify-center space-x-4 mb-8">
+            <a href="/createcourse"
+                class="bg-blue-500 text-white px-6 py-3 rounded-md hover:bg-blue-600 transition duration-300 ease-in-out">Create
+                Course</a>
+            <a href="/teacherMyCourses"
+                class="bg-green-500 text-white px-6 py-3 rounded-md hover:bg-green-600 transition duration-300 ease-in-out">My
+                Courses</a>
+            <a href="/view-report"
+                class="bg-purple-500 text-white px-6 py-3 rounded-md hover:bg-purple-600 transition duration-300 ease-in-out">View
+                Report</a>
+            <a href="/changePassword"
+                class="bg-yellow-500 text-white px-6 py-3 rounded-md hover:bg-yellow-600 transition duration-300 ease-in-out">Change
+                Password</a>
         </div>
-        <div class="m-3">
-          <a href="/my-courses"
-            class="text-white bg-green-500 rounded-md font-medium px-4 py-2 hover:bg-green-600 focus:outline-none focus:shadow-outline-green active:bg-green-800">
-            My Courses
-          </a>
+
+        <!-- Search Courses Section -->
+        <div class="mb-8">
+            <label for="search" class="text-gray-700 font-bold">Search Courses:</label>
+            <input type="text" id="search" name="search" class="mt-1 p-2 border border-gray-300 rounded-md">
         </div>
-        <div class="m-3">
-          <a href="/view-report"
-            class="text-white bg-purple-500 rounded-md font-medium px-4 py-2 hover:bg-purple-600 focus:outline-none focus:shadow-outline-purple active:bg-purple-800">
-            View Report
-          </a>
+
+        <!-- Course Cards Section -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+            <% courses.forEach(course=> { %>
+                <a href="/view-course/<%= course.id %>?currentUserId=<%= encodeURIComponent(currentUser.id) %>"
+                    class="course-card bg-white border border-gray-300 p-4 rounded-md shadow-lg hover:shadow-xl transition duration-300">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-lg font-bold text-gray-800">
+                            <%= course.courseName %>
+                        </h2>
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                            class="w-6 h-6 text-gray-500 hover:text-gray-700 cursor-pointer" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7">
+                            </path>
+                        </svg>
+                    </div>
+                    <!--Image -->
+                    <img src="https://source.unsplash.com/500x300/?educational"
+                        alt="<%= course.courseName %>" class="w-full h-40 object-cover rounded-md mb-4">
+                    <% users.forEach(user=> { %>
+                        <% if (user.id===course.userId) { %>
+                            <p class="text-sm text-gray-600">by <%= user.firstName %>
+                                    <%= user.lastName %>
+                            </p>
+                            <% } %>
+                                <% }) %>
+                </a>
+                <% }) %>
         </div>
-      </div>
 
-    </div>
-  </div>
 
-  <div class="flex items-center justify-center p-2">
-    <%- include('displayCourses.ejs', { currentUser, courses, users, enrols: enrols }) %>
-  </div>
+    </main>
 
-  <div class="grid grid-cols-12 gap-4 py-8">
-    <div class="col-start-4 col-span-6">
-      <%- include('footer.ejs') %>
-      <a href="/signout"
-        class="bg-red-600 hover:bg-red-800 text-white px-5 py-2 rounded-md font-medium mr-2 mb-2">Signout</a>
-    </div>
+    <%- include ('footer.ejs') %>
 
-    <% if (messages && messages.error && messages.error.length > 0) { %>
-      <% for (var i = 0; i < messages.error.length; i++) { %>
-        <p class="bg-red-300 my-4 list-none rounded border-gray-50 px-4 py-2"><%= messages.error[i] %></p>
-      <% } %>
-    <% } %>
-  </div>
+    <script>
+        function filterCourses() {
+            const searchInput = document.getElementById('search').value.toLowerCase();
+            const courseCards = document.querySelectorAll('.course-card');
+
+            courseCards.forEach(card => {
+                const courseName = card.querySelector('.text-lg').textContent.toLowerCase();
+
+                if (searchInput.length > 0 && courseName.includes(searchInput)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        document.getElementById('search').addEventListener('input', filterCourses);
+    </script>
 </body>
 
 </html>

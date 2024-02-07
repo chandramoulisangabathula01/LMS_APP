@@ -6,6 +6,10 @@ module.exports = (sequelize, DataTypes) => {
       Users.hasMany(models.Courses, {
         foreignKey: "userId",
       });
+      Users.belongsToMany(models.Pages, {
+        through: models.Enrollments,
+        foreignKey: "userId",
+      });
     }
   }
   Users.init(

@@ -1,3 +1,5 @@
+// enrollments.ejs
+
 /*eslint-disable no-unused-vars*/
 'use strict';
 const {
@@ -13,8 +15,9 @@ module.exports = (sequelize, DataTypes) => {
   Enrollments.init({
     userId: DataTypes.INTEGER,
     courseId: DataTypes.INTEGER,
-    noOfChapCompleted: DataTypes.INTEGER,
-    totChapInTheCourse: DataTypes.INTEGER,
+    chapterId: DataTypes.INTEGER,
+    pageId: DataTypes.INTEGER,
+    completed: DataTypes.BOOLEAN,
   }, {
     sequelize,
     modelName: 'Enrollments',

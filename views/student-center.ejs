@@ -3,49 +3,92 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="<%= csrfToken %>">
-    <link rel="stylesheet" href="./css/styles.css">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <title><%= title %></title>
+    <title>
+        <%= title %>
+    </title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Tailwind CSS -->
+    <link rel="stylesheet" href="./css/styles.css" />
+    <link rel="icon" type="image/png" sizes="16x16"
+        href="/images/icons8-books-doodle-favicons/Web/icons8-books-doodle-16.png">
 </head>
 
-<body>
-    <div class="grid grid-cols-4">
-        <div class="col-start-2 col-span-2">
-            <%- include('header.ejs') %>
-            <div class="py-6 mx-8 my-4 flex flex-col bg-gray-100 rounded-lg shadow-md">
-                <div class="border-b-2 flex py-4 m-2 justify-between items-center">
-                    <h1 class="text-2xl font-bold text-blue-800">
-                        Greetings, <br> <%= currentUser.firstName %> <%= currentUser.lastName %>
-                    </h1>
-                    <a href="/signout" class="text-white rounded px-3 py-2 text-base font-semibold bg-red-500 hover:bg-red-600">Logout</a>
-                </div>
-                <div class="border-b-2 m-2">
-                    <h1 class="text-3xl text-green-600 font-extrabold m-1">
-                        Elevate Your Skills: Start Your Learning Journey Now!
-                    </h1>
-                    <p class="text-lg text-gray-700 m-2">
-                        Immerse yourself in a wealth of knowledge. Explore our array of courses and commence your journey to excellence.
-                    </p>
-                </div>
-                <div class="m-2">
-                    <a href="/MyCourses" class="bg-purple-600 text-white px-6 py-3 rounded-full font-medium hover:bg-purple-700 text-center block">
-                        View My Courses
-                    </a>
-                </div>
-                <hr class="my-4 border-t-2 border-black-400">
-            </div>
-            <%- include('displayCourses.ejs', { currentUser, courses, users, enrols: enrols }) %>
+<body class="bg-gray-100">
+    <div class="container mx-auto">
+        <%- include ('header.ejs') %>
+            <div class="py-8 px-4 md:px-0 md:py-16 flex flex-col items-center">
+                <h1 class="text-3xl md:text-4xl lg:text-5xl font-semibold text-center text-gray-800 mb-4">Welcome to Your Learning Journey</h1>
+                <p class="text-lg md:text-xl text-gray-600 text-center mb-8">Unlock your potential and explore a world of knowledge with us.</p>
 
-            <% if (messages && messages.error && messages.error.length > 0) { %>
-                <% for (var i = 0; i < messages.error.length; i++) { %>
-                    <p class="bg-red-400 rounded-md my-4 p-3 text-white"><%= messages.error[i] %></p>
-                <% } %>
-            <% } %>
-        </div>
+                    
+
+                    <div class="flex justify-center space-x-4 mb-8">
+                        <a href="/studentMyCourses"
+                            class="bg-blue-500 text-white px-6 py-3 rounded-md hover:bg-blue-600 transition duration-300 ease-in-out">View Enrolled
+                            Course</a>
+                        <a href="/changePassword"
+                            class="bg-yellow-500 text-white px-6 py-3 rounded-md hover:bg-yellow-600 transition duration-300 ease-in-out">Change
+                            Password</a>
+                    </div>
+                    
+                    <!-- search element -->
+                    <div id="courseContainer" class="space-y-4">
+                        <div class="mb-4">
+                            <label for="search" class="text-sm font-bold text-gray-700">Search Courses:</label>
+                            <input type="text" id="search" name="search" class="mt-1 p-1 border border-gray-300 rounded-md">
+                        </div>
+            
+                        <% for (let course of courses) { %>
+                            <a href="/view-course/<%= course.id %>?currentUserId=<%= encodeURIComponent(currentUser.id) %>" class="course-card bg-white border border-gray-300 p-4 rounded-lg shadow-lg hover:shadow-xl transition duration-300" style="display: none;">
+                                <div class="flex items-center justify-between mb-2">
+                                    <h2 class="course-name text-xl font-bold">
+                                        <%= course.courseName %> 
+                                    </h2>
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-gray-500 hover:text-gray-700 cursor-pointer" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                    </svg>
+                                </div>
+                                <% for(let user of users) { %>
+                                    <% if(user.id === course.userId) { %>
+                                        <p class="text-sm text-gray-600 mb-2">by <%= user.firstName %> <%= user.lastName %></p>
+                                    <% } %>
+                                <% } %>
+                            </a>
+                        <% } %>
+                    </div>
+
+                <%- include ('displayCourses.ejs', { currentUser, courses, users, enrols }) %>
+                    <% if(messages && messages.error && messages.error.length> 0) { %>
+                        <% for(var i=0; i<messages.error.length; i++) { %>
+                            <p class="bg-red-300 my-4 list-none rounded border-gray-50 px-4 py-2">
+                                <%= messages.error[i] %>
+                            </p>
+                            <% } %>
+                                <% } %>
+            </div>
     </div>
+
+    <%- include ('footer.ejs') %>
+
+    <!-- script for search -->
+    <script>
+        function filterCourses() {
+            const searchInput = document.getElementById('search').value.toLowerCase();
+            const courseCards = document.querySelectorAll('.course-card');
+            courseCards.forEach(card => {
+                const courseName = card.querySelector('.course-name').textContent.toLowerCase();
+                if (searchInput.length > 0 && courseName.includes(searchInput)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+        document.getElementById('search').addEventListener('input', filterCourses);
+    </script>
 </body>
+
 
 </html>

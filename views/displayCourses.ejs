@@ -1,8 +1,10 @@
 <div class="py-4">
     <h2 class="text-3xl font-bold py-2">Explore Available Courses:</h2> 
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         <% for (let course of courses) { %>
-        <li class="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300">
+        <div class="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300">
             <a href="/view-course/<%= course.id %>?currentUserId=<%= encodeURIComponent(currentUser.id) %>">
+                <img src="https://source.unsplash.com/400x200/?education" alt="Course Image" class="w-full h-40 object-cover object-center rounded-t-lg">
                 <div class="p-4">
                     <h3 class="text-xl font-semibold mb-2"><%= course.courseName %></h3>
                     <% for(let user of users) { %>
@@ -28,7 +30,7 @@
                     <% } %>
                 </div>
             </a>
-        </li>
+        </div>
         <% } %>
-    </ul>
+    </div>
 </div>

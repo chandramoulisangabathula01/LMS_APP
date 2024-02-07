@@ -1,3 +1,5 @@
+//migrations/create-enrollments.ejs
+
 /*eslint-disable no-unused-vars*/
 "use strict";
 /** @type {import('sequelize-cli').Migration} */
@@ -16,11 +18,14 @@ module.exports = {
       courseId: {
         type: Sequelize.INTEGER,
       },
-      noOfChapCompleted: {
+      chapterId: {
         type: Sequelize.INTEGER,
       },
-      totChapInTheCourse: {
+      pageId: {
         type: Sequelize.INTEGER,
+      },
+      completed: {
+        type: Sequelize.BOOLEAN,
       },
       createdAt: {
         allowNull: false,
